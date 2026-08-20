@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FP8 — 浮点8位量化新范式</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>FP8 — 浮点8位量化新范式</h1>
+      <p><span class="highlight">定义</span>：保留浮点动态范围，GPU原生支持，兼顾训练与推理</p>
+      <section id="background" class="card"><h2>发明人与背景</h2><p>FP8 由 <strong>Paulius Micikevicius 等</strong>（NVIDIA + ARM + Intel）在 2022 年系统提出，论文为 <a href="https://arxiv.org/abs/2209.05433">FP8 Formats for Deep Learning</a>。它不是传统 INT 量化，而是把“低比特”和“浮点动态范围”结合起来，特别适合现代 GPU 原生加速。</p></section><section id="principle" class="card"><h2>核心原理</h2><p>FP8 像两种相机模式：<strong>E4M3</strong> 像人像模式，细节更好，适合 inference；<strong>E5M2</strong> 像风景模式，范围更大，适合 gradient 与 training。</p><p>E4M3 = 4 exponent bits + 3 mantissa bits，范围约 ±448；E5M2 = 5 exponent bits + 2 mantissa bits，范围约 ±57344。相比 INT8，FP8 仍保留 exponent，因此更擅长处理动态范围跨度大的张量。</p>
+    <div class="svg-wrap"><svg width="900" height="250" viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+      <text x="85" y="35" font-size="18">Bit layout comparison</text>
+      <g>
+        <rect x="90" y="60" width="40" height="40" fill="#60a5fa"/><rect x="130" y="60" width="160" height="40" fill="#c4b5fd"/>
+        <text x="100" y="85" font-size="14">S</text><text x="180" y="85" font-size="14">FP16 exponent + mantissa</text>
+        <text x="320" y="85" font-size="16">FP16</text>
+        <rect x="90" y="120" width="40" height="40" fill="#60a5fa"/><rect x="130" y="120" width="80" height="40" fill="#f9a8d4"/><rect x="210" y="120" width="60" height="40" fill="#c4b5fd"/>
+        <text x="100" y="145" font-size="14">S</text><text x="155" y="145" font-size="14">E4</text><text x="227" y="145" font-size="14">M3</text><text x="320" y="145" font-size="16">FP8 E4M3</text>
+        <rect x="90" y="180" width="40" height="40" fill="#60a5fa"/><rect x="130" y="180" width="100" height="40" fill="#fca5a5"/><rect x="230" y="180" width="40" height="40" fill="#c4b5fd"/>
+        <text x="100" y="205" font-size="14">S</text><text x="162" y="205" font-size="14">E5</text><text x="243" y="205" font-size="14">M2</text><text x="320" y="205" font-size="16">FP8 E5M2</text>
+        <rect x="520" y="120" width="40" height="40" fill="#60a5fa"/><rect x="560" y="120" width="320" height="40" fill="#86efac"/>
+        <text x="532" y="145" font-size="14">S</text><text x="660" y="145" font-size="16">INT8（无 exponent，靠 scale）</text>
+      </g>
+    </svg></div>
+    <div class="svg-wrap"><svg width="900" height="220" viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="90" y="70" width="220" height="90" rx="12" fill="#ede9fe" stroke="#7e3af2"/>
+      <rect x="360" y="70" width="220" height="90" rx="12" fill="#dbeafe" stroke="#1a56db"/>
+      <rect x="630" y="70" width="220" height="90" rx="12" fill="#d1fae5" stroke="#059669"/>
+      <text x="145" y="104" font-size="18">E4M3</text><text x="122" y="129" font-size="14">weights / activations</text>
+      <text x="415" y="104" font-size="18">E5M2</text><text x="395" y="129" font-size="14">gradients / training</text>
+      <text x="698" y="104" font-size="18">Transformer Engine</text><text x="678" y="129" font-size="14">自动 cast / scale</text>
+    </svg></div>
+    </section><section id="steps" class="card"><h2>基本方法</h2><div class="step"><div class="step-num">1</div><div><h3>选择格式</h3><p>Inference 中常用 E4M3 处理权重/激活；Training 中常用 E5M2 处理梯度。</p></div></div><div class="step"><div class="step-num">2</div><div><h3>设置 per-tensor scaling</h3><p>用额外 scale 管理不同张量的动态范围，避免下溢/上溢。</p></div></div><div class="step"><div class="step-num">3</div><div><h3>启用 Transformer Engine</h3><p>借助 NVIDIA Transformer Engine 自动完成 cast、amax 统计与缩放更新。</p></div></div><div class="step"><div class="step-num">4</div><div><h3>混合精度运行</h3><p>累加常保持更高精度，如 FP16/BF16/FP32 accumulator。</p></div></div><div class="step"><div class="step-num">5</div><div><h3>监控数值稳定性</h3><p>持续跟踪 overflow、underflow 和 loss spike。</p></div></div>
+<pre>import transformer_engine.pytorch as te
+
+fp8_recipe = te.common.recipe.DelayedScaling(
+    fp8_format=te.common.recipe.Format.HYBRID,
+    amax_history_len=16,
+)
+with te.fp8_autocast(enabled=True, fp8_recipe=fp8_recipe):
+    output = model(input_ids)</pre></section><section id="challenges" class="card"><h2>实施难点</h2><p><strong>E4M3 vs E5M2 策略</strong>：不同张量该选哪个格式，不是固定答案。</p><p><strong>Scaling factor 管理</strong>：FP8 仍需要良好的 amax 追踪和 scale 更新策略。</p><p><strong>硬件支持</strong>：H100 / H200 / Blackwell 等新 GPU 支持更完善，较老 GPU 往往无法原生 FP8 加速。</p></section><section id="frontier" class="card"><h2>学术前沿</h2><div class="timeline"><div class="tl-item"><h3>Transformer Engine (NVIDIA, 2023)</h3><p>把 FP8 从论文概念推进到实际大规模训练框架。</p></div><div class="tl-item"><h3>FP8-LM (2023)</h3><p>探索语言模型全流程 FP8 化的数值策略。</p></div><div class="tl-item"><h3>MX / Microscaling (2023)</h3><p>研究更灵活的低位宽浮点格式与共享缩放机制。</p></div><div class="tl-item"><h3>DeepSeek FP8 训练 (2024)</h3><p>大规模模型训练开始更积极采用 FP8，以追求吞吐与成本优势。</p></div></div></section><section id="compare" class="card"><h2>对比</h2><div class="grid-2"><div class="card"><h3>FP8 vs INT8</h3><p>INT8 依赖 scale，把浮点映射成整数；FP8 直接保留 exponent，因此对动态范围更友好，但需要硬件支持。</p></div><div class="card"><h3>FP8 vs FP16</h3><p>FP8 更省显存、更快，但数值更脆弱；FP16/BF16 仍是很多任务中的稳健基线。</p></div></div></section><section id="refs" class="card"><h2>参考文献</h2><ul class="ref-list"><li>Micikevicius et al., FP8 Formats for Deep Learning, 2022.</li><li>NVIDIA Transformer Engine documentation, 2023.</li><li>FP8-LM and microscaling format works, 2023.</li><li>Industry reports on FP8 training adoption in 2024.</li></ul></section>
+    </main>
+    <aside class="toc"><a href="#background">发明人与背景</a><a href="#principle">核心原理</a><a href="#steps">基本方法</a><a href="#challenges">实施难点</a><a href="#frontier">学术前沿</a><a href="#compare">对比</a><a href="#refs">参考文献</a></aside>
+  </div>
+</div>
+
+</body>
+</html>

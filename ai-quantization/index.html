@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 模型量化技术全景</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <section class="hero">
+    <p class="mini-note">Quantization · Compression · Deployment · Acceleration</p>
+    <h1>AI 模型量化技术全景</h1>
+    <p>这是一套面向中文读者的 <span class="highlight">AI quantization</span> 学习站点：从基础概念到 PTQ、QAT，再到 GPTQ、AWQ、NF4、SmoothQuant、GGUF 与 FP8，帮助你理解不同精度、不同硬件与不同场景下的最佳方案。</p>
+    <div class="nav-list"><a href="00-intro.html">00 总览</a><a href="01-ptq.html">01 PTQ</a><a href="02-qat.html">02 QAT</a><a href="03-gptq.html">03 GPTQ</a><a href="04-awq.html">04 AWQ</a><a href="05-bitsandbytes.html">05 BitsAndBytes</a><a href="06-smoothquant.html">06 SmoothQuant</a><a href="07-gguf.html">07 GGUF</a><a href="08-fp8.html">08 FP8</a></div>
+  </section>
+
+  <section>
+    <h2>八大方法速览</h2>
+    <div class="grid-3">
+    <a class="method-card" href="01-ptq.html">
+      <div class="icon">🎯</div>
+      <h3>PTQ — 训练后量化</h3>
+      <p>无需重新训练，校准数据即可</p>
+      <span class="badge badge-green">难度：简单</span>
+      <span class="badge badge-blue">边缘部署</span><span class="badge badge-blue">模型压缩</span>
+    </a>
+    
+    <a class="method-card" href="02-qat.html">
+      <div class="icon">🔁</div>
+      <h3>QAT — 量化感知训练</h3>
+      <p>训练时模拟量化误差，精度最高</p>
+      <span class="badge badge-red">难度：复杂</span>
+      <span class="badge badge-blue">高精度要求</span><span class="badge badge-blue">生产部署</span>
+    </a>
+    
+    <a class="method-card" href="03-gptq.html">
+      <div class="icon">⚡</div>
+      <h3>GPTQ — 逐层二阶最优量化</h3>
+      <p>Hessian矩阵引导，LLM专属</p>
+      <span class="badge badge-orange">难度：中等</span>
+      <span class="badge badge-blue">大语言模型</span><span class="badge badge-blue">INT4推理</span>
+    </a>
+    
+    <a class="method-card" href="04-awq.html">
+      <div class="icon">🔍</div>
+      <h3>AWQ — 激活感知权重量化</h3>
+      <p>保护1%关键通道，精度损失极小</p>
+      <span class="badge badge-orange">难度：中等</span>
+      <span class="badge badge-blue">LLM部署</span><span class="badge badge-blue">移动端</span>
+    </a>
+    
+    <a class="method-card" href="05-bitsandbytes.html">
+      <div class="icon">🧩</div>
+      <h3>BitsAndBytes — 混合精度分解</h3>
+      <p>outlier用FP16，其余INT8/NF4</p>
+      <span class="badge badge-green">难度：简单</span>
+      <span class="badge badge-blue">微调</span><span class="badge badge-blue">QLoRA</span>
+    </a>
+    
+    <a class="method-card" href="06-smoothquant.html">
+      <div class="icon">🌊</div>
+      <h3>SmoothQuant — W8A8平滑量化</h3>
+      <p>激活困难迁移至权重</p>
+      <span class="badge badge-orange">难度：中等</span>
+      <span class="badge badge-blue">推理服务器</span><span class="badge badge-blue">高吞吐</span>
+    </a>
+    
+    <a class="method-card" href="07-gguf.html">
+      <div class="icon">🦙</div>
+      <h3>GGUF/llama.cpp — CPU混合量化</h3>
+      <p>分组量化+C++极致优化</p>
+      <span class="badge badge-green">难度：简单</span>
+      <span class="badge badge-blue">本地部署</span><span class="badge badge-blue">CPU推理</span>
+    </a>
+    
+    <a class="method-card" href="08-fp8.html">
+      <div class="icon">🔢</div>
+      <h3>FP8 — 浮点8位新范式</h3>
+      <p>E4M3/E5M2双格式，GPU原生支持</p>
+      <span class="badge badge-red">难度：复杂</span>
+      <span class="badge badge-blue">训练加速</span><span class="badge badge-blue">H100推理</span>
+    </a>
+    </div>
+  </section>
+
+  <section>
+    <h2>全局对比表</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>方向</th><th>量化目标</th><th>代表精度</th><th>是否需要训练数据</th><th>速度</th><th>适用场景</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>PTQ</td><td>快速压缩已训练模型</td><td>INT8 / INT4</td><td>少量校准数据</td><td>快</td><td>边缘部署、模型压缩</td></tr>
+          <tr><td>QAT</td><td>用训练补偿量化误差</td><td>INT8 / INT4 / Binary</td><td>需要训练数据</td><td>训练慢，推理快</td><td>高精度生产部署</td></tr>
+          <tr><td>GPTQ</td><td>LLM 权重量化最优解</td><td>INT4</td><td>少量校准数据</td><td>中到快</td><td>大语言模型离线量化</td></tr>
+          <tr><td>AWQ</td><td>保护关键通道，降低损失</td><td>INT4</td><td>少量校准数据</td><td>快</td><td>LLM 部署、移动端</td></tr>
+          <tr><td>BitsAndBytes</td><td>Outlier 分离与低成本微调</td><td>INT8 / NF4</td><td>微调时需要训练数据</td><td>快</td><td>QLoRA、低显存实验</td></tr>
+          <tr><td>SmoothQuant</td><td>实现高吞吐 W8A8</td><td>W8A8</td><td>少量校准数据</td><td>快</td><td>推理服务器</td></tr>
+          <tr><td>GGUF / llama.cpp</td><td>CPU 友好本地推理</td><td>Q2_K ~ Q8_0</td><td>通常不需要</td><td>中</td><td>本地部署、CPU 推理</td></tr>
+          <tr><td>FP8</td><td>保留动态范围并原生加速</td><td>E4M3 / E5M2</td><td>训练或校准数据</td><td>很快</td><td>H100 训练与推理</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>推荐学习路径</h2>
+    <div class="grid-3">
+      <div class="card">
+        <h3>初学者路径</h3>
+        <p>先读 <a href="00-intro.html">总览</a>，理解 scale、zero-point、校准与精度损失；再学习 <a href="01-ptq.html">PTQ</a> 和 <a href="07-gguf.html">GGUF</a>，建立部署直觉。</p>
+        <span class="badge badge-green">关键词：INT8</span><span class="badge badge-blue">CPU</span><span class="badge badge-purple">校准</span>
+      </div>
+      <div class="card">
+        <h3>工程师路径</h3>
+        <p>从 <a href="01-ptq.html">PTQ</a>、<a href="06-smoothquant.html">SmoothQuant</a>、<a href="04-awq.html">AWQ</a> 入手，重点关注 kernel、吞吐、显存、硬件支持与线上部署策略。</p>
+        <span class="badge badge-orange">关键词：W8A8</span><span class="badge badge-blue">吞吐</span><span class="badge badge-green">Serving</span>
+      </div>
+      <div class="card">
+        <h3>研究者路径</h3>
+        <p>系统掌握 <a href="02-qat.html">QAT</a>、<a href="03-gptq.html">GPTQ</a>、<a href="08-fp8.html">FP8</a>，重点研究 Hessian、STE、outlier、格式设计与新型低比特训练。</p>
+        <span class="badge badge-red">关键词：Hessian</span><span class="badge badge-purple">STE</span><span class="badge badge-orange">Format Design</span>
+      </div>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

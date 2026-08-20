@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GPTQ — 逐层二阶最优量化</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>GPTQ — 逐层二阶最优量化</h1>
+      <p><span class="highlight">定义</span>：用Hessian矩阵引导，逐列最优化量化误差</p>
+      <section id="background" class="card"><h2>发明人与背景</h2><p>GPTQ 由 <strong>Elias Frantar, Saleh Ashkboos, Torsten Hoefler, Dan Alistarh</strong>（ETH Zurich）在 2022 年提出，论文为 <a href="https://arxiv.org/abs/2210.17323">GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers</a>。它诞生于一个现实痛点：LLM 太大，无法轻松重新训练，而普通 PTQ 对 Transformer 的 INT4 压缩效果又不够理想。</p></section><section id="principle" class="card"><h2>核心原理</h2><p>GPTQ 像雕塑家用精密仪器逐刀修正：每量化一列，都根据当前误差与 Hessian 近似来补偿剩余列。它继承自 <em>OBQ</em>（Optimal Brain Quantization）思想。</p><p>核心近似是 <code>H = 2XX^T</code>，其中 <code>X</code> 是校准数据上的输入激活。GPTQ 逐列量化：<code>w_q = round(w/scale)</code>，得到误差后，通过 <strong>Cholesky decomposition</strong> 或相关矩阵逆近似，把误差传播到尚未量化的列。</p>
+    <div class="svg-wrap"><svg width="900" height="250" viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="40" width="280" height="170" fill="#eff6ff" stroke="#1a56db"/>
+      <line x1="150" y1="40" x2="150" y2="210" stroke="#93c5fd"/><line x1="220" y1="40" x2="220" y2="210" stroke="#93c5fd"/><line x1="290" y1="40" x2="290" y2="210" stroke="#93c5fd"/>
+      <text x="120" y="28" font-size="18">权重矩阵 W</text>
+      <rect x="85" y="45" width="60" height="160" fill="#bfdbfe" opacity=".9"/>
+      <text x="102" y="230" font-size="14">先量化 col 1</text>
+      <path d="M145 125 C230 15 360 15 430 85" stroke="#dc2626" stroke-width="4" fill="none" marker-end="url(#g1)"/>
+      <path d="M145 145 C250 225 370 210 440 155" stroke="#7e3af2" stroke-width="4" fill="none" marker-end="url(#g1)"/>
+      <rect x="470" y="65" width="240" height="120" rx="12" fill="#ede9fe" stroke="#7e3af2"/>
+      <text x="535" y="100" font-size="18">误差补偿</text>
+      <text x="495" y="130" font-size="15">依据 Hessian / Cholesky</text>
+      <text x="505" y="155" font-size="15">更新剩余未量化列</text>
+      <defs><marker id="g1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#334155"/></marker></defs>
+    </svg></div>
+    <div class="svg-wrap"><svg width="900" height="230" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="70" width="160" height="90" rx="12" fill="#dbeafe" stroke="#1a56db"/>
+      <rect x="300" y="70" width="160" height="90" rx="12" fill="#ede9fe" stroke="#7e3af2"/>
+      <rect x="520" y="70" width="160" height="90" rx="12" fill="#d1fae5" stroke="#059669"/>
+      <text x="120" y="104" font-size="17">收集 X</text><text x="100" y="128" font-size="14">calibration activations</text>
+      <text x="340" y="104" font-size="17">构造 H</text><text x="325" y="128" font-size="14">H = 2XXᵀ</text>
+      <text x="556" y="104" font-size="17">逐列量化</text><text x="535" y="128" font-size="14">补偿后续列</text>
+      <path d="M240 115 L300 115" stroke="#64748b" stroke-width="4" marker-end="url(#g2)"/>
+      <path d="M460 115 L520 115" stroke="#64748b" stroke-width="4" marker-end="url(#g2)"/>
+      <defs><marker id="g2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    </svg></div>
+    </section><section id="steps" class="card"><h2>基本方法</h2><div class="step"><div class="step-num">1</div><div><h3>收集校准数据</h3><p>用少量代表性文本跑前向，保存每层输入激活 X。</p></div></div><div class="step"><div class="step-num">2</div><div><h3>计算 Hessian 近似</h3><p>基于 X 构造 H = 2XX^T 或其统计近似，估计误差敏感性。</p></div></div><div class="step"><div class="step-num">3</div><div><h3>进行 Cholesky 分解</h3><p>对矩阵做稳定求解或逆近似，为后续误差传播准备系数。</p></div></div><div class="step"><div class="step-num">4</div><div><h3>逐列量化并补偿</h3><p>按列把权重映射到低比特，并把误差传播给未处理列。</p></div></div><div class="step"><div class="step-num">5</div><div><h3>导出低比特模型</h3><p>输出 INT4 权重、group scale，以及推理所需 kernel 元数据。</p></div></div>
+<pre>for layer in transformer_layers:
+    X = collect_inputs(layer, calib_data)
+    H = 2 * X @ X.T
+    chol = cholesky(H + damping * I)
+    for col in range(layer.weight.shape[1]):
+        w = layer.weight[:, col]
+        q = quantize_int4(w, scale_for(col))
+        err = w - dequantize(q)
+        layer.weight[:, col] = q
+        layer.weight[:, col+1:] -= propagate(err, chol, col)</pre></section><section id="challenges" class="card"><h2>实施难点</h2><p><strong>Hessian 内存 O(d²)</strong>：隐藏维度很大时，矩阵存储与求逆都昂贵。</p><p><strong>逐层量化较慢</strong>：虽然不训练，但逐列优化仍比普通 PTQ 更耗时。</p><p><strong>Cholesky 数值稳定性</strong>：阻尼（damping）与矩阵条件数不好时，分解可能不稳定。</p></section><section id="frontier" class="card"><h2>学术前沿</h2><div class="timeline"><div class="tl-item"><h3>GPTQ v2</h3><p>工程实现不断优化，降低量化耗时并改善不同 group size 配置。</p></div><div class="tl-item"><h3>QuIP (2023) / QuIP# (2024)</h3><p>探索随机旋转、信息理论近似与更稳健的二阶误差建模。</p></div><div class="tl-item"><h3>Marlin CUDA kernel (2024)</h3><p>更高效的 INT4 推理 kernel 让 GPTQ 模型真正跑得更快。</p></div><div class="tl-item"><h3>AQLM (2024)</h3><p>进一步推进极低比特下的高精度大模型压缩。</p></div></div></section><section id="compare" class="card"><h2>对比</h2><div class="grid-2"><div class="card"><h3>GPTQ vs PTQ</h3><p>GPTQ 是“更聪明”的 PTQ：不是简单 min-max，而是引入二阶信息按列最小化误差，特别适合 LLM。</p></div><div class="card"><h3>GPTQ vs AWQ</h3><p>GPTQ 追求误差优化，AWQ 强调保护关键通道。前者理论味更浓，后者工程部署往往更轻。</p></div></div></section><section id="refs" class="card"><h2>参考文献</h2><ul class="ref-list"><li>Frantar et al., GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers, 2022.</li><li>Frantar & Alistarh, Optimal Brain Quantization related lines.</li><li>Chee et al., QuIP / QuIP#, 2023-2024.</li><li>Marlin CUDA kernel and downstream GPTQ serving optimizations, 2024.</li></ul></section>
+    </main>
+    <aside class="toc"><a href="#background">发明人与背景</a><a href="#principle">核心原理</a><a href="#steps">基本方法</a><a href="#challenges">实施难点</a><a href="#frontier">学术前沿</a><a href="#compare">对比</a><a href="#refs">参考文献</a></aside>
+  </div>
+</div>
+
+</body>
+</html>
