@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QAT — 量化感知训练</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>QAT — 量化感知训练</h1>
+      <p><span class="highlight">定义</span>：在训练过程中模拟量化误差，让模型学会抗量化</p>
+      <section id="background" class="card"><h2>发明人与背景</h2><p>QAT（Quantization-Aware Training）不是单一论文发明，而是一条演化路线：<strong>Bengio 等人</strong>在 2013 年推动了 <em>Straight-Through Estimator, STE</em> 的离散训练思路；<strong>PACT</strong>（2018）开始学习激活裁剪边界；<strong>LSQ</strong>（2020，Facebook/Meta）进一步把量化 step size 学成参数。QAT 的兴起原因很直接：很多小模型或高要求业务中，朴素 PTQ 精度不够。</p></section><section id="principle" class="card"><h2>核心原理</h2><p>QAT 像学钢琴时戴着手套练习：训练阶段刻意制造“动作受限”的环境，真正演出时反而更稳。这里的“手套”就是 Fake Quantization。</p><p>关键在 <span class="highlight">STE</span>：前向传播使用量化值，反向传播时把量化节点近似为恒等映射，从而绕过不可微的 round/clamp。</p>
+    <div class="svg-wrap"><svg width="900" height="220" viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="70" width="150" height="70" rx="14" fill="#dbeafe" stroke="#1a56db"/>
+      <rect x="300" y="70" width="170" height="70" rx="14" fill="#ede9fe" stroke="#7e3af2"/>
+      <rect x="540" y="70" width="150" height="70" rx="14" fill="#d1fae5" stroke="#059669"/>
+      <text x="135" y="110" font-size="18">FP32 输入</text>
+      <text x="340" y="110" font-size="18">FakeQuantize</text>
+      <text x="585" y="110" font-size="18">量化输出</text>
+      <path d="M230 105 L300 105" stroke="#64748b" stroke-width="4" marker-end="url(#q1)"/>
+      <path d="M470 105 L540 105" stroke="#64748b" stroke-width="4" marker-end="url(#q1)"/>
+      <path d="M615 160 C540 210 320 210 230 160" stroke="#dc2626" stroke-width="4" fill="none" marker-end="url(#q2)"/>
+      <text x="345" y="205" font-size="16" fill="#dc2626">Backward: STE 近似 identity</text>
+      <defs>
+        <marker id="q1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker>
+        <marker id="q2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M10,0 L0,5 L10,10 z" fill="#dc2626"/></marker>
+      </defs>
+    </svg></div>
+    <div class="svg-wrap"><svg width="900" height="230" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg">
+      <line x1="100" y1="150" x2="780" y2="150" stroke="#94a3b8" stroke-width="3"/>
+      <polyline points="120,150 220,150 221,80 360,80 361,150 520,150 521,120 680,120 681,150 760,150" fill="none" stroke="#1a56db" stroke-width="4"/>
+      <text x="120" y="55" font-size="18">量化函数有台阶，不可微</text>
+      <text x="520" y="95" font-size="16" fill="#7e3af2">STE 用直线近似梯度</text>
+      <line x1="120" y1="165" x2="760" y2="65" stroke="#7e3af2" stroke-dasharray="7 6" stroke-width="3"/>
+    </svg></div>
+    </section><section id="steps" class="card"><h2>基本方法</h2><div class="step"><div class="step-num">1</div><div><h3>插入 FakeQuantize 节点</h3><p>在权重、激活或关键算子周围加入模拟量化节点，但底层仍存 FP32/FP16 参数。</p></div></div><div class="step"><div class="step-num">2</div><div><h3>前向传播使用量化数值</h3><p>通过 round、clamp、scale 让网络在训练阶段就感受到低比特误差。</p></div></div><div class="step"><div class="step-num">3</div><div><h3>反向传播使用 STE</h3><p>把不可微量化函数替换为近似可导路径，让梯度继续更新原始参数。</p></div></div><div class="step"><div class="step-num">4</div><div><h3>收敛后移除 FakeQuantize 节点</h3><p>训练结束后把 learned scale 等参数固化到最终导出图。</p></div></div><div class="step"><div class="step-num">5</div><div><h3>导出量化模型</h3><p>导出 INT8/INT4 权重与部署图，供 TensorRT、TFLite、ONNX Runtime 等后端使用。</p></div></div>
+<pre>def fake_quant(x, scale, qmin=-128, qmax=127):
+    q = (x / scale).round().clamp(qmin, qmax)
+    return q * scale
+
+class STEQuant(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, x, scale):
+        return fake_quant(x, scale)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        return grad_output, None</pre></section><section id="challenges" class="card"><h2>实施难点</h2><p><strong>梯度消失</strong>：过度裁剪或过低 bit 容易让可学习信号变差。</p><p><strong>超参数敏感</strong>：learning rate、warmup、clip range、group size 都可能影响最终精度。</p><p><strong>LLM 成本极高</strong>：对几十亿甚至上百亿参数再训练，算力成本显著高于 PTQ。</p><p><strong>量化粒度选择</strong>：per-token、per-channel、group-wise 设计会影响稳定性与 kernel 复杂度。</p></section><section id="frontier" class="card"><h2>学术前沿</h2><div class="timeline"><div class="tl-item"><h3>LLM-QAT (Meta, 2023)</h3><p>把 QAT 推向大模型，证明适当训练可显著恢复低比特精度。</p></div><div class="tl-item"><h3>QuaRot (2024)</h3><p>引入旋转减少异常通道，让量化更“均匀”。</p></div><div class="tl-item"><h3>EfficientQAT (2024)</h3><p>关注减少重训练成本，让量化感知训练更接近工程可用。</p></div><div class="tl-item"><h3>BitNet b1.58 (2024)</h3><p>把超低比特训练推向新的讨论热点，探索训练与量化的一体化。</p></div></div></section><section id="compare" class="card"><h2>对比</h2><div class="grid-2"><div class="card"><h3>QAT vs PTQ</h3><p>QAT 更慢、更贵，但通常精度更高，特别适合小模型、语音模型、检测模型或高精度业务。</p></div><div class="card"><h3>QAT vs GPTQ</h3><p>GPTQ 是高质量 PTQ，更适合无训练资源的 LLM 部署；QAT 则适合有训练闭环、追求极致精度的团队。</p></div></div></section><section id="refs" class="card"><h2>参考文献</h2><ul class="ref-list"><li>Bengio et al., Estimating or Propagating Gradients Through Stochastic Neurons, 2013.</li><li>Choi et al., PACT: Parameterized Clipping Activation for Quantized Neural Networks, 2018.</li><li>Esser et al., Learned Step Size Quantization (LSQ), 2020.</li><li>Meta LLM-QAT and related large-model quantization-aware training works, 2023-2024.</li></ul></section>
+    </main>
+    <aside class="toc"><a href="#background">发明人与背景</a><a href="#principle">核心原理</a><a href="#steps">基本方法</a><a href="#challenges">实施难点</a><a href="#frontier">学术前沿</a><a href="#compare">对比</a><a href="#refs">参考文献</a></aside>
+  </div>
+</div>
+
+</body>
+</html>

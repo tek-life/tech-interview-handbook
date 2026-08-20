@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GGUF / llama.cpp — CPU 友好的混合量化</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>GGUF / llama.cpp — CPU 友好的混合量化</h1>
+      <p><span class="highlight">定义</span>：分组量化+混合精度+C++极致优化，让大模型跑在普通电脑上</p>
+      <section id="background" class="card"><h2>发明人与背景</h2><p><strong>Georgi Gerganov</strong> 在 2023 年用 <a href="https://github.com/ggerganov/llama.cpp">llama.cpp</a> 把 LLaMA 移植到纯 C/C++ 推理世界。之后 GGUF 格式替代了早期 GGML 格式，成为本地大模型分发和 CPU 量化的重要标准。它的意义在于：让普通 Mac、Windows、Linux 笔记本也能跑起大模型。</p></section><section id="principle" class="card"><h2>核心原理</h2><p>GGUF 像压缩行李：常用物品或关键层少压缩，其他衣物大力真空压缩。它强调 <strong>block quantization</strong>：把矩阵切成小块（常见 32 个元素一组），每块保存自己的 scale/min。</p><p>再配合混合精度策略，例如 attention 层使用 <code>Q8_0</code>，FFN 使用 <code>Q4_K</code>，在精度与 CPU 性能间找到平衡。</p>
+    <div class="svg-wrap"><svg width="900" height="230" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg">
+      <text x="80" y="30" font-size="18">Block quantization</text>
+      <rect x="80" y="50" width="740" height="130" fill="#fff" stroke="#cbd5e1"/>
+      <rect x="90" y="60" width="80" height="110" fill="#dbeafe" stroke="#94a3b8"/><rect x="180" y="60" width="80" height="110" fill="#ede9fe" stroke="#94a3b8"/><rect x="270" y="60" width="80" height="110" fill="#d1fae5" stroke="#94a3b8"/><rect x="360" y="60" width="80" height="110" fill="#fed7aa" stroke="#94a3b8"/><rect x="450" y="60" width="80" height="110" fill="#dbeafe" stroke="#94a3b8"/><rect x="540" y="60" width="80" height="110" fill="#ede9fe" stroke="#94a3b8"/><rect x="630" y="60" width="80" height="110" fill="#d1fae5" stroke="#94a3b8"/><rect x="720" y="60" width="80" height="110" fill="#fed7aa" stroke="#94a3b8"/>
+      <text x="112" y="115" font-size="15">Block 1</text><text x="103" y="140" font-size="13">scale + min</text>
+      <text x="382" y="115" font-size="15">Block 4</text><text x="373" y="140" font-size="13">独立参数</text>
+      <text x="652" y="115" font-size="15">Block 7</text><text x="647" y="140" font-size="13">细粒度量化</text>
+    </svg></div>
+    <div class="svg-wrap"><svg width="900" height="240" viewBox="0 0 900 240" xmlns="http://www.w3.org/2000/svg">
+      <rect x="90" y="60" width="280" height="120" rx="14" fill="#dbeafe" stroke="#1a56db"/>
+      <rect x="500" y="60" width="280" height="120" rx="14" fill="#ede9fe" stroke="#7e3af2"/>
+      <text x="165" y="100" font-size="18">Attention layers</text><text x="185" y="128" font-size="16">Q8_0</text>
+      <text x="585" y="100" font-size="18">FFN layers</text><text x="605" y="128" font-size="16">Q4_K</text>
+      <path d="M370 120 L500 120" stroke="#64748b" stroke-width="4" marker-end="url(#gg1)"/>
+      <text x="380" y="95" font-size="14">混合精度分配</text>
+      <defs><marker id="gg1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    </svg></div>
+    </section><section id="steps" class="card"><h2>基本方法</h2><div class="step"><div class="step-num">1</div><div><h3>选择量化档位</h3><p>根据设备内存和可接受精度，从 Q2_K 到 Q8_0 中选择。</p></div></div><div class="step"><div class="step-num">2</div><div><h3>执行 block quantization</h3><p>按 32 或其他 block 大小切分权重块，并保存局部 scale/min。</p></div></div><div class="step"><div class="step-num">3</div><div><h3>关键层保留高精度</h3><p>为 attention、embedding 或输出头分配更高精度格式。</p></div></div><div class="step"><div class="step-num">4</div><div><h3>打包为 .gguf 文件</h3><p>将权重、tokenizer、metadata 和量化配置一起封装。</p></div></div><div class="step"><div class="step-num">5</div><div><h3>在 llama.cpp 推理</h3><p>借助 AVX、NEON、Metal、CUDA 等后端运行本地模型。</p></div></div>
+<pre># 典型示意命令
+./llama-quantize model-f16.gguf model-q4_k_m.gguf q4_k_m
+./llama-cli -m model-q4_k_m.gguf -p "请解释什么是量化" -n 128</pre></section><section id="challenges" class="card"><h2>实施难点</h2><p><strong>量化档位选择</strong>：Q4_K、Q5_K、Q6_K、Q8_0 之间差距既体现在精度，也体现在延迟。</p><p><strong>重要层判断</strong>：哪些层值得保留更高精度，往往依赖经验或离线测试。</p><p><strong>ARM/AVX 优化复杂度</strong>：真正让 CPU 推理快起来，需要大量底层 kernel 优化。</p></section><section id="frontier" class="card"><h2>学术前沿</h2><div class="timeline"><div class="tl-item"><h3>IQ (Importance Quantization) 系列</h3><p>结合重要性估计，为本地部署提供更好的精度-体积折中。</p></div><div class="tl-item"><h3>GGUF v3</h3><p>格式继续扩展 metadata、tokenizer 和多后端兼容性。</p></div><div class="tl-item"><h3>Adaptive Mixed Precision</h3><p>探索按层、按块、按算子动态分配 bit 宽。</p></div></div></section><section id="compare" class="card"><h2>对比</h2><div class="grid-2"><div class="card"><h3>GGUF vs GPTQ</h3><p>GPTQ 更偏 GPU/LLM 离线量化算法；GGUF 更偏最终可分发格式与 CPU 友好推理生态。</p></div><div class="card"><h3>GGUF vs BitsAndBytes</h3><p>GGUF 重部署，尤其是离线本地运行；BitsAndBytes 重训练/加载阶段的显存优化与 CUDA 生态。</p></div></div></section><section id="refs" class="card"><h2>参考文献</h2><ul class="ref-list"><li>ggerganov/llama.cpp repository and GGUF format documentation.</li><li>Community benchmarks comparing Q2_K ~ Q8_0 families on CPU and Apple Silicon.</li><li>Importance Quantization (IQ) series discussions and implementations.</li><li>GGUF evolution notes across versions.</li></ul></section>
+    </main>
+    <aside class="toc"><a href="#background">发明人与背景</a><a href="#principle">核心原理</a><a href="#steps">基本方法</a><a href="#challenges">实施难点</a><a href="#frontier">学术前沿</a><a href="#compare">对比</a><a href="#refs">参考文献</a></aside>
+  </div>
+</div>
+
+</body>
+</html>

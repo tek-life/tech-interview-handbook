@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWQ — 激活感知权重量化</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>AWQ — 激活感知权重量化</h1>
+      <p><span class="highlight">定义</span>：识别并保护决定模型精度的1%关键权重通道</p>
+      <section id="background" class="card"><h2>发明人与背景</h2><p>AWQ 由 <strong>Ji Lin, Jiaming Tang, Haotian Tang, Shang Yang, Song Han</strong>（MIT HAN Lab）在 2023 年提出，论文为 <a href="https://arxiv.org/abs/2306.00978">AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration</a>。它的背景是：LLM 权重量化到 INT4 时，少量通道对最终输出特别重要，而统一压缩会破坏这些“脆弱点”。</p></section><section id="principle" class="card"><h2>核心原理</h2><p>AWQ 像摄影师压缩照片时先找到主体区域：主体尽量保真，背景可以更激进压缩。这里的“主体”就是由激活幅值识别出的 <strong>salient channels</strong>。</p><p>核心等价变换是 <code>W' = W / s</code>, <code>x' = x * s</code>。数学上输出不变，但关键通道在量化前被重新缩放，从而减小误差。</p>
+    <div class="svg-wrap"><svg width="900" height="230" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg">
+      <text x="60" y="30" font-size="18">Activation magnitude 排名</text>
+      <line x1="70" y1="190" x2="830" y2="190" stroke="#94a3b8" stroke-width="2"/>
+      <g><rect x="80" y="150" width="18" height="40" fill="#93c5fd" rx="4"/><rect x="108" y="135" width="18" height="55" fill="#93c5fd" rx="4"/><rect x="136" y="40" width="18" height="150" fill="#dc2626" rx="4"/><rect x="164" y="120" width="18" height="70" fill="#93c5fd" rx="4"/><rect x="192" y="128" width="18" height="62" fill="#93c5fd" rx="4"/><rect x="220" y="122" width="18" height="68" fill="#93c5fd" rx="4"/><rect x="248" y="118" width="18" height="72" fill="#93c5fd" rx="4"/><rect x="276" y="25" width="18" height="165" fill="#dc2626" rx="4"/><rect x="304" y="113" width="18" height="77" fill="#93c5fd" rx="4"/><rect x="332" y="121" width="18" height="69" fill="#93c5fd" rx="4"/><rect x="360" y="124" width="18" height="66" fill="#93c5fd" rx="4"/><rect x="388" y="129" width="18" height="61" fill="#93c5fd" rx="4"/><rect x="416" y="117" width="18" height="73" fill="#93c5fd" rx="4"/><rect x="444" y="108" width="18" height="82" fill="#93c5fd" rx="4"/><rect x="472" y="115" width="18" height="75" fill="#93c5fd" rx="4"/><rect x="500" y="127" width="18" height="63" fill="#93c5fd" rx="4"/><rect x="528" y="132" width="18" height="58" fill="#93c5fd" rx="4"/><rect x="556" y="119" width="18" height="71" fill="#93c5fd" rx="4"/><rect x="584" y="35" width="18" height="155" fill="#dc2626" rx="4"/><rect x="612" y="123" width="18" height="67" fill="#93c5fd" rx="4"/><rect x="640" y="130" width="18" height="60" fill="#93c5fd" rx="4"/><rect x="668" y="126" width="18" height="64" fill="#93c5fd" rx="4"/></g>
+      <text x="630" y="55" font-size="16" fill="#dc2626">高激活通道 ≈ top 1%</text>
+      <text x="640" y="80" font-size="14">需要保护 / 单独 scale</text>
+    </svg></div>
+    <div class="svg-wrap"><svg width="900" height="210" viewBox="0 0 900 210" xmlns="http://www.w3.org/2000/svg">
+      <rect x="80" y="60" width="220" height="90" rx="12" fill="#dbeafe" stroke="#1a56db"/>
+      <rect x="340" y="60" width="220" height="90" rx="12" fill="#ede9fe" stroke="#7e3af2"/>
+      <rect x="600" y="60" width="220" height="90" rx="12" fill="#d1fae5" stroke="#059669"/>
+      <text x="146" y="95" font-size="18">x · W</text>
+      <text x="377" y="95" font-size="18">(x·s) · (W/s)</text>
+      <text x="640" y="95" font-size="18">输出不变，误差更小</text>
+      <path d="M300 105 L340 105" stroke="#64748b" stroke-width="4" marker-end="url(#aw1)"/>
+      <path d="M560 105 L600 105" stroke="#64748b" stroke-width="4" marker-end="url(#aw1)"/>
+      <defs><marker id="aw1" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#64748b"/></marker></defs>
+    </svg></div>
+    </section><section id="steps" class="card"><h2>基本方法</h2><div class="step"><div class="step-num">1</div><div><h3>收集激活统计</h3><p>在代表性数据上运行模型，记录每个通道的 activation magnitude。</p></div></div><div class="step"><div class="step-num">2</div><div><h3>识别显著通道</h3><p>按激活尺度排序，选出 top 1% 左右的关键通道。</p></div></div><div class="step"><div class="step-num">3</div><div><h3>计算 per-channel scale s</h3><p>让关键通道在量化前重新缩放，减小离散化误差。</p></div></div><div class="step"><div class="step-num">4</div><div><h3>应用等价变换</h3><p>把输入激活乘以 s，权重除以 s，保持数学等价。</p></div></div><div class="step"><div class="step-num">5</div><div><h3>量化到 INT4</h3><p>对调整后的权重执行 group-wise / per-channel 量化并评估结果。</p></div></div>
+<pre>acts = collect_channel_activation_stats(model, calib_data)
+salient = topk_channels(acts, ratio=0.01)
+for layer in model.layers:
+    s = search_channel_scale(layer.weight, acts[layer.name], salient[layer.name])
+    W_prime = layer.weight / s
+    layer.runtime_input_scale = s
+    layer.qweight = quantize_int4(W_prime, group_size=128)</pre></section><section id="challenges" class="card"><h2>实施难点</h2><p><strong>显著通道识别精度</strong>：如果激活统计不稳定，可能会保护错对象。</p><p><strong>跨架构适配</strong>：不同 LLM 的 attention、MLP、MoE 结构差异会影响 AWQ 效果。</p><p><strong>scale 搜索开销</strong>：要在精度与速度间取得平衡，scale 搜索本身需要工程优化。</p></section><section id="frontier" class="card"><h2>学术前沿</h2><div class="timeline"><div class="tl-item"><h3>AWQ v2</h3><p>围绕更稳健显著通道搜索与更高效 kernel 的持续演进。</p></div><div class="tl-item"><h3>EfficientQAT</h3><p>把 AWQ 的关键通道直觉与轻量训练结合。</p></div><div class="tl-item"><h3>MixQ (2024)</h3><p>研究更灵活的混合精度分配与硬件友好策略。</p></div><div class="tl-item"><h3>QuaRot</h3><p>通过旋转缓解 outlier，对 AWQ 风格方法形成互补。</p></div></div></section><section id="compare" class="card"><h2>对比</h2><div class="grid-2"><div class="card"><h3>AWQ vs GPTQ</h3><p>AWQ 更偏“识别关键通道并保护”，GPTQ 更偏“逐列二阶误差最小化”。AWQ 通常更易集成到部署管线。</p></div><div class="card"><h3>AWQ vs BitsAndBytes</h3><p>AWQ 主要解决离线部署压缩，BitsAndBytes 更强调训练/微调与 outlier 分离运行时策略。</p></div></div></section><section id="refs" class="card"><h2>参考文献</h2><ul class="ref-list"><li>Lin et al., AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration, 2023.</li><li>Song Han Lab open-source AWQ implementations and follow-up engineering notes.</li><li>MixQ and related mixed-precision LLM quantization works, 2024.</li><li>QuaRot / rotation-based quantization papers, 2024.</li></ul></section>
+    </main>
+    <aside class="toc"><a href="#background">发明人与背景</a><a href="#principle">核心原理</a><a href="#steps">基本方法</a><a href="#challenges">实施难点</a><a href="#frontier">学术前沿</a><a href="#compare">对比</a><a href="#refs">参考文献</a></aside>
+  </div>
+</div>
+
+</body>
+</html>

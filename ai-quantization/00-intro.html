@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>量化技术总览：What / Why / How</title>
+  <style>
+:root {
+  --primary: #1a56db;
+  --accent: #7e3af2;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --sub: #64748b;
+  --green: #059669;
+  --red: #dc2626;
+  --orange: #d97706;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: .5rem; }
+h2 { font-size: 1.5rem; color: var(--text); margin: 2rem 0 1rem; border-left: 4px solid var(--primary); padding-left: .75rem; }
+h3 { font-size: 1.15rem; color: var(--accent); margin: 1.5rem 0 .5rem; }
+p { margin-bottom: 1rem; }
+a { color: var(--primary); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.badge { display: inline-block; padding: .2rem .6rem; border-radius: 99px; font-size: .8rem; font-weight: 600; margin: .15rem; }
+.badge-blue { background: #dbeafe; color: #1e40af; }
+.badge-purple { background: #ede9fe; color: #6d28d9; }
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-orange { background: #fed7aa; color: #92400e; }
+.badge-red { background: #fee2e2; color: #991b1b; }
+pre, code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 8px; overflow-x: auto; font-size: .9rem; margin-bottom: 1rem; }
+.back-link { display: inline-flex; align-items: center; gap: .4rem; color: var(--sub); text-decoration: none; margin-bottom: 2rem; font-size: .95rem; }
+.back-link:hover { color: var(--primary); }
+table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: .95rem; }
+th { background: var(--primary); color: #fff; padding: .7rem 1rem; text-align: left; }
+td { padding: .65rem 1rem; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) td { background: #f1f5f9; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.2rem; align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem; }
+.toc { position: sticky; top: 2rem; background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.2rem; font-size: .9rem; }
+.toc a { display: block; color: var(--sub); text-decoration: none; padding: .3rem 0; border-bottom: 1px solid var(--border); }
+.toc a:last-child { border-bottom: none; }
+.toc a:hover { color: var(--primary); }
+.layout { display: grid; grid-template-columns: 1fr 220px; gap: 2rem; }
+@media (max-width: 768px) { .layout { grid-template-columns: 1fr; } .toc { display: none; } h1 { font-size: 1.6rem; } }
+.highlight { background: linear-gradient(90deg,#dbeafe,#ede9fe); padding: .15rem .4rem; border-radius: 4px; font-weight: 600; }
+.timeline { position: relative; padding-left: 2rem; }
+.timeline::before { content:''; position:absolute; left:.6rem; top:0; bottom:0; width:2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 1.5rem; }
+.tl-item::before { content:''; position:absolute; left:-1.45rem; top:.4rem; width:.9rem; height:.9rem; border-radius:50%; background: var(--primary); border:2px solid #fff; box-shadow:0 0 0 2px var(--primary); }
+
+
+.hero { background: linear-gradient(135deg, #dbeafe, #ede9fe 55%, #fff); border: 1px solid var(--border); border-radius: 20px; padding: 2.5rem; margin-bottom: 2rem; box-shadow: 0 8px 24px rgba(30,41,59,.08); }
+.hero p { max-width: 760px; color: var(--sub); }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.method-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1.25rem; text-decoration: none; color: inherit; box-shadow: 0 4px 14px rgba(15,23,42,.06); transition: transform .2s ease, box-shadow .2s ease; display: block; }
+.method-card:hover { transform: translateY(-4px); box-shadow: 0 12px 28px rgba(15,23,42,.12); }
+.method-card .icon { font-size: 1.8rem; margin-bottom: .6rem; }
+.method-card h3 { margin-top: 0; }
+.nav-list { display: flex; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 2rem; }
+.nav-list a { text-decoration: none; padding: .55rem .9rem; background: #fff; border: 1px solid var(--border); border-radius: 999px; color: var(--text); }
+.nav-list a:hover { color: var(--primary); border-color: #bfdbfe; }
+.mini-note { color: var(--sub); font-size: .95rem; }
+.svg-wrap { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; overflow-x: auto; }
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+.kpi .card strong { display:block; font-size: 2rem; color: var(--primary); margin-bottom: .3rem; }
+.ref-list li { margin-left: 1.2rem; margin-bottom: .4rem; }
+
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <a class="back-link" href="index.html">← 返回目录</a>
+  <div class="layout">
+    <main>
+      <h1>量化技术总览：What / Why / How</h1>
+      <p>量化（Quantization）是把高精度数值映射到低精度表示的过程，用更少的 bit 保存更多计算价值。它既是模型压缩技术，也是部署优化技术。</p>
+
+      <section id="what" class="card">
+        <h2>什么是量化？</h2>
+        <p>可以把量化类比成 <span class="highlight">照片压缩</span>：<strong>FP32</strong> 像 RAW 格式，保留全部细节但体积很大；<strong>INT8</strong> 像高质量 JPEG，在多数场景仍清晰；<strong>INT4</strong> 更像缩略图，体积极小但细节更容易丢失。</p>
+        <div class="svg-wrap">
+          <svg width="900" height="220" viewBox="0 0 900 220" xmlns="http://www.w3.org/2000/svg">
+            <rect x="30" y="30" width="760" height="26" rx="13" fill="#bfdbfe"/>
+            <rect x="30" y="75" width="380" height="26" rx="13" fill="#c4b5fd"/>
+            <rect x="30" y="120" width="190" height="26" rx="13" fill="#86efac"/>
+            <rect x="30" y="165" width="95" height="26" rx="13" fill="#fdba74"/>
+            <text x="810" y="48" font-size="16" fill="#1e293b">FP32 · 32 bits · 约 ±3.4e38</text>
+            <text x="430" y="93" font-size="16" fill="#1e293b">FP16 · 16 bits · 约 ±65504</text>
+            <text x="240" y="138" font-size="16" fill="#1e293b">INT8 · 8 bits · -128 ~ 127</text>
+            <text x="145" y="183" font-size="16" fill="#1e293b">INT4 · 4 bits · -8 ~ 7</text>
+          </svg>
+        </div>
+      </section>
+
+      <section id="why" class="card">
+        <h2>为什么需要量化？</h2>
+        <div class="kpi">
+          <div class="card"><strong>8×</strong><p>内存减少：FP32 → INT4 理论上减少 8 倍，意味着相同显存可容纳更大模型。</p></div>
+          <div class="card"><strong>2–4×</strong><p>速度提升：INT8 matrix multiply 往往比 FP16 / FP32 更快，尤其在 Tensor Core 或专用 NPU 上。</p></div>
+          <div class="card"><strong>更低功耗</strong><p>能耗降低：边缘设备、手机、工控盒子、普通笔记本都更容易完成本地推理。</p></div>
+        </div>
+      </section>
+
+      <section id="how" class="card">
+        <h2>量化的基本原理</h2>
+        <p>最常见的是 <strong>linear quantization</strong>：用 <code>scale</code> 与 <code>zero_point</code> 把连续实数映射到离散整数。</p>
+        <pre>Q(x) = round(x / S + Z)
+其中：
+S = scale，控制一个整数步长代表多少实数范围
+Z = zero_point，让 0 尽量准确映射</pre>
+        <div class="svg-wrap">
+          <svg width="900" height="230" viewBox="0 0 900 230" xmlns="http://www.w3.org/2000/svg">
+            <line x1="70" y1="70" x2="830" y2="70" stroke="#1a56db" stroke-width="4"/>
+            <line x1="70" y1="160" x2="830" y2="160" stroke="#7e3af2" stroke-width="4"/>
+            <text x="50" y="50" font-size="18" fill="#1e293b">FP32 range</text>
+            <text x="50" y="140" font-size="18" fill="#1e293b">INT8 bins</text>
+            <text x="60" y="95" font-size="14">-2.5</text><text x="805" y="95" font-size="14">2.5</text>
+            <text x="50" y="185" font-size="14">-128</text><text x="795" y="185" font-size="14">127</text>
+            <circle cx="220" cy="70" r="7" fill="#dc2626"/>
+            <circle cx="420" cy="70" r="7" fill="#dc2626"/>
+            <circle cx="640" cy="70" r="7" fill="#dc2626"/>
+            <line x1="220" y1="78" x2="220" y2="152" stroke="#94a3b8" stroke-dasharray="6 5"/>
+            <line x1="420" y1="78" x2="420" y2="152" stroke="#94a3b8" stroke-dasharray="6 5"/>
+            <line x1="640" y1="78" x2="640" y2="152" stroke="#94a3b8" stroke-dasharray="6 5"/>
+            <rect x="210" y="150" width="20" height="20" fill="#c4b5fd"/>
+            <rect x="410" y="150" width="20" height="20" fill="#c4b5fd"/>
+            <rect x="630" y="150" width="20" height="20" fill="#c4b5fd"/>
+            <text x="190" y="215" font-size="14">映射到离散整数格点</text>
+          </svg>
+        </div>
+      </section>
+
+      <section id="landscape" class="card">
+        <h2>量化方向全景</h2>
+        <table>
+          <thead><tr><th>方法</th><th>核心思路</th><th>一句话特点</th><th>典型场景</th></tr></thead>
+          <tbody><tr><td>PTQ</td><td>训练后量化</td><td>无需重新训练，校准数据即可</td><td>边缘部署 / 模型压缩</td></tr><tr><td>QAT</td><td>量化感知训练</td><td>训练时模拟量化误差，精度最高</td><td>高精度要求 / 生产部署</td></tr><tr><td>GPTQ</td><td>逐层二阶最优量化</td><td>Hessian矩阵引导，LLM专属</td><td>大语言模型 / INT4推理</td></tr><tr><td>AWQ</td><td>激活感知权重量化</td><td>保护1%关键通道，精度损失极小</td><td>LLM部署 / 移动端</td></tr><tr><td>BitsAndBytes</td><td>混合精度分解</td><td>outlier用FP16，其余INT8/NF4</td><td>微调 / QLoRA</td></tr><tr><td>SmoothQuant</td><td>W8A8平滑量化</td><td>激活困难迁移至权重</td><td>推理服务器 / 高吞吐</td></tr><tr><td>GGUF/llama.cpp</td><td>CPU混合量化</td><td>分组量化+C++极致优化</td><td>本地部署 / CPU推理</td></tr><tr><td>FP8</td><td>浮点8位新范式</td><td>E4M3/E5M2双格式，GPU原生支持</td><td>训练加速 / H100推理</td></tr></tbody>
+        </table>
+      </section>
+
+      <section id="challenges" class="card">
+        <h2>量化的核心挑战</h2>
+        <h3>1. Outliers</h3>
+        <p>少数极大值通道会拉宽分布范围，导致大部分普通数值被压到很粗的量化格点上。</p>
+        <h3>2. Calibration</h3>
+        <p>校准数据不代表真实分布时，scale 估计会偏离线上激活统计，从而造成显著精度下降。</p>
+        <h3>3. Hardware Support</h3>
+        <p>不是所有硬件都原生支持 INT4 / FP8；即使支持，kernel 实现、layout 与 memory bandwidth 也会决定真实性能。</p>
+      </section>
+    </main>
+    <aside class="toc">
+      <a href="#what">什么是量化</a>
+      <a href="#why">为什么需要量化</a>
+      <a href="#how">基本原理</a>
+      <a href="#landscape">方向全景</a>
+      <a href="#challenges">核心挑战</a>
+    </aside>
+  </div>
+</div>
+
+</body>
+</html>
