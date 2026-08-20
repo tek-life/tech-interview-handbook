@@ -133,7 +133,7 @@ Some people might think that the BTTC is simply the total number of elements in 
 
 This is why it is important to pay attention to every detail given about the question. Be careful not to determine the incorrect BTTC due to lack of attention to the question details!
 
-With the correct BTTC determined, you now know the time complexity of the optimal solution lies between your initial solution and the BTTC and can work your way towards it. If your solution already has the BTTC and the interviewer is asking you to optimize further, there are usually two things they are looking out for:
+With the correct BTTC determined, you now know the time complexity of the optimal solution lies between your initial solution and the BTTC and can work your way toward it. If your solution already has the BTTC and the interviewer is asking you to optimize further, there are usually two things they are looking out for:
 
 - Do even less work. Your solution could be O(n) but making two passes of the array and the interviewer is looking for the solution that uses a single pass.
 - Use less space. Refer to the section below on optimizing space complexity.

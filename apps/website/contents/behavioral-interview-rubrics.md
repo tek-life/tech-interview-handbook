@@ -83,7 +83,7 @@ Example Responses:
 Example Questions:
 
 - Tell me about a time when you needed to overcome external obstacles to complete a task or project.
-- Tell me about a time a project took longer as expected
+- Tell me about a time a project took longer than expected
 
 Example Responses:
 

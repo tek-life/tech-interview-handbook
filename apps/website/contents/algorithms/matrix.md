@@ -50,6 +50,23 @@ Copying a matrix in Python is:
 copied_matrix = [row[:] for row in matrix]
 ```
 
+### Converting between 1D and 2D indices
+
+An `m x n` matrix can be treated as a one-dimensional array with `m * n` elements. Given a zero-based index in that array, divide it by the number of columns to get the row and use the remainder to get the column:
+
+```py
+row = index // num_columns
+col = index % num_columns
+```
+
+To convert a row and column back into a one-dimensional index:
+
+```py
+index = row * num_columns + col
+```
+
+This technique can be useful when applying algorithms such as binary search to a matrix.
+
 ### Transposing a matrix
 
 The transpose of a matrix is found by interchanging its rows into columns or columns into rows.

@@ -45,7 +45,7 @@ How to prepare for your software engineering interview:
 
 Do you still have trouble getting shortlisted at some or all of the top tech companies? Your resume could be the issue.
 
-Your resume is the single most important entry point to getting shortlisted in major tech companies like FAANG / MANGA. After getting shortlisted, your past achievements become markedly less important as compared to your coding interview skills - which as we know, can be methodically learnt. Being able to frame your past achievements well enough to get through the screening stage is hence very important.
+Your resume is the single most important entry point to getting shortlisted in major tech companies like FAANG / MANGA. After getting shortlisted, your past achievements become markedly less important as compared to your coding interview skills - which as we know, can be methodically learned. Being able to frame your past achievements well enough to get through the screening stage is hence very important.
 
 Unfortunately, even the most qualified candidates I know personally don't know how to write a good resume and fail to get shortlisted. The truth is that when many of us don't get shortlisted at top tech companies like FAANG / MANGA, we tend to think that we were under-qualified - but in most cases, it's probably just the lack of good framing.
 
@@ -214,7 +214,7 @@ The **STAR** format helps you to organize your answers to behavioral questions. 
   - Severity
   - Specific benchmarks/outcomes required
 - **Action**: Explain what you did to meet your objectives, describing options you had and how you made decisions
-- **Results**: Describe the outcome of your actions and what you learnt
+- **Results**: Describe the outcome of your actions and what you learned
 
 Read more: [The STAR format for answering behavioral questions](https://en.wikipedia.org/wiki/Situation,_task,_action,_result)
 

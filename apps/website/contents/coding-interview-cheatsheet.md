@@ -118,7 +118,7 @@ You should read and familiarize with this guide even before you start practicing
 
 The worst thing you can do next is jump straight to coding - interviewers expect there to be some time for a 2-way discussion on the correct approach to take for the question, including analysis of the time and space complexity.
 
-This discussion can range from a few minutes to up to 5-10 minutes depending on the complexity of the question. This also gives interviewers a chance to provide you with hints to guide you towards an acceptable solution.
+This discussion can range from a few minutes to up to 5-10 minutes depending on the complexity of the question. This also gives interviewers a chance to provide you with hints to guide you toward an acceptable solution.
 
 - ✅ If you get stuck on the approach or optimization, use [this structured way](./coding-interview-techniques.md) to jog your memory / find a good approach
 - ✅ Explain a few approaches that you could take at a high level (don't go too much into implementation details). Discuss the tradeoffs of each approach with your interviewer as if the interviewer was your coworker and you all are collaborating on a problem.

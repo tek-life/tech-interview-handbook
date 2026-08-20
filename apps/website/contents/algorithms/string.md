@@ -35,7 +35,7 @@ Common string algorithms:
 
 ## Time complexity
 
-A strings is an array of characters, so the time complexities of basic string operations will closely resemble that of array operations.
+A string is an array of characters, so the time complexities of basic string operations will closely resemble that of array operations.
 
 | Operation | Big-O |
 | --------- | ----- |

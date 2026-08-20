@@ -10,7 +10,7 @@ image: /img/meta-facebook.jpg
 hide_table_of_contents: true
 ---
 
-Since summer internships are round the corner, I figured it'd be useful to share some tips for interns to have a successful internship. Having mentored a few interns who and seen many examples of successful interns at Meta, I observed a list of traits that successful interns demonstrate.
+Since summer internships are round the corner, I figured it'd be useful to share some tips for interns to have a successful internship. Having mentored a few interns and seen many examples of successful interns at Meta, I observed a list of traits that successful interns demonstrate.
 
 <head>
   <link rel="canonical" href="https://www.yangshuntay.com/blog/how-to-have-successful-software-engineering-internship" />

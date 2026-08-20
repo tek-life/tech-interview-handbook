@@ -346,7 +346,7 @@ Simply copy the content from your resume and paste it into a plain text document
 
 Your cover letter serves as a handshake, an introduction to the professional persona encapsulated in your resume. It's an avenue to express your genuine interest in a position or a particular company, portraying the value you can add to the organization. Unlike the formal tone of a resume, a cover letter allows for a unique, creative expression of your personal brand, ensuring it **complements rather than replicates** your resume.
 
-**Tailoring is key in crafting a compelling cover letter. **It is about aligning your skills and aspirations with the role at hand, going beyond mere name switches. Hence, delve into the company's ethos, the industry, and the specific role, letting your cover letter reflect a clear understanding and a deliberate choice. You need to show that you have done your research and you understand the company mission and how you will contribute towards that goal.
+**Tailoring is key in crafting a compelling cover letter. **It is about aligning your skills and aspirations with the role at hand, going beyond mere name switches. Hence, delve into the company's ethos, the industry, and the specific role, letting your cover letter reflect a clear understanding and a deliberate choice. You need to show that you have done your research and you understand the company mission and how you will contribute toward that goal.
 
 :::tip Expert tip
 

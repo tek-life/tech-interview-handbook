@@ -44,7 +44,7 @@ I am about to recommend relevant sections to go in sequentially and how to syste
 
 3. Know and try various techniques for each LeetCode question. It's not purely about variety but more about if you were to even come back to the same question, will you be able to give a more optimal solution? If you don't know where to get started especially when solving problems in general refer to this [coding interview techniques section](/coding-interview-techniques/).
    - Start with a whiteboard or pen and paper. Show your thought process.
-   - In most companies, if you were to show your thought process while doing, interviewers tend to favour candidates who do this. If you are not confident, start thinking that you are explaining and teaching a 12 year old child about how to solve this question.
+   - In most companies, if you were to show your thought process while doing, interviewers tend to favor candidates who do this. If you are not confident, start thinking that you are explaining and teaching a 12 year old child about how to solve this question.
    - Code it out and write your own test cases. Get used to the HackerRank or LeetCode IDEs.
    - Now with virtual interviews, some companies tend to use HackerRank live to conduct whiteboard interviews. Prepare a pen and paper beside you as you work along. Prepare to remote desktop protocol (RDP) into your computer to show step-by-step workings.
    - Do not blurt out the solution straightaway as interviewers can tell that you memorize.

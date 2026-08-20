@@ -24,7 +24,7 @@ Here's the initial version of Teik Jun's resume I received from him.
   </figure>
 </div>
 
-On first glance, it looks like a solid resume, and it is. However, I've known Teik Jun for a few years now since the [Major League Hacking (MLH) Fellowship program](https://fellowship.mlh.io/) where he [contributed a ton of features to Docusaurus v2](https://github.com/facebook/docusaurus/commits?author=teikjun), and know that he has done even greater things in the past. This version of his resume doesn't do his skills justice. Let's see how we can improve it by applying the points learnt in the previous section.
+On first glance, it looks like a solid resume, and it is. However, I've known Teik Jun for a few years now since the [Major League Hacking (MLH) Fellowship program](https://fellowship.mlh.io/) where he [contributed a ton of features to Docusaurus v2](https://github.com/facebook/docusaurus/commits?author=teikjun), and know that he has done even greater things in the past. This version of his resume doesn't do his skills justice. Let's see how we can improve it by applying the points learned in the previous section.
 
 ## Resume critique
 

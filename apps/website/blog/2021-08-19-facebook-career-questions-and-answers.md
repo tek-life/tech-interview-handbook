@@ -37,7 +37,7 @@ A number of students from the Project Intern group have been asking me questions
 
 ## Caveats
 
-- These replies are tailored towards the Facebook interview process for interns and fresh grads. They may or may not apply to other companies, especially smaller ones.
+- These replies are tailored toward the Facebook interview process for interns and fresh grads. They may or may not apply to other companies, especially smaller ones.
 - Most of these answers apply across the board for every engineer role but there are exceptions for certain specialized engineering roles like Security Engineering or Front End Engineering.
 
 ## Application/Referral
@@ -52,7 +52,7 @@ IANAR and I don't filter any resumes, so I don't exactly know. But from experien
 
 ### Does GPA affect a lot on the resume screening?
 
-GPA/CAP/grades is just one of the signals that can be extracted from the resume. As mentioned above, there are many other qualities and achievements a candidate can possess. Personally if I had my own company, I would rather hire a candidate with a high second upper and fantastic open source portfolio with multiple internship experiences at big companies over a student with CAP 5.00 but has nothing else to show for. Not that one candidate is stronger than the other, but the former would probably be a safer choice.
+GPA/CAP/grades are just one of the signals that can be extracted from the resume. As mentioned above, there are many other qualities and achievements a candidate can possess. Personally if I had my own company, I would rather hire a candidate with a high second upper and fantastic open source portfolio with multiple internship experiences at big companies over a student with CAP 5.00 but has nothing else to show for. Not that one candidate is stronger than the other, but the former would probably be a safer choice.
 
 ### In general, how's the barrier of entry for big tech companies like FB in terms of grades, would a second lower (3.5-3.9) even get pass the resume screening stage?
 
@@ -298,7 +298,7 @@ Differences answered above. If you're solid in your Front End web fundamentals (
 
 I work on selling FRL hardware, not directly on FRL hardware/software itself. If you haven't heard of the [metaverse](https://www.theverge.com/22588022/mark-zuckerberg-facebook-ceo-metaverse-interview), you should read up about it. I don't have too many opinions on the future of FRL but I can say that Quest 2 is the market leader in terms of VR headsets and [Quest 2 was a major driver behind FB's $885 million 2020 Q4 non-ad revenue](https://www.roadtovr.com/zuckerberg-quest-2-mainstream-vr-headset-facebook-q4-2020-earnings/).
 
-### What engineers is Facebook looking for - especially for New Grads? At the moment, I have knowledge on a breadth of tools but when asked on under the hood stuff, I can only explain what the tool / framework is trying to extract instead of going in depth as to how stuff actually works. Is the firm looking for new grad engineers who are language / tool / framework agnostic and can work towards building the skillset within the firm - or people who already have a speciality?
+### What engineers is Facebook looking for - especially for New Grads? At the moment, I have knowledge on a breadth of tools but when asked on under the hood stuff, I can only explain what the tool / framework is trying to extract instead of going in depth as to how stuff actually works. Is the firm looking for new grad engineers who are language / tool / framework agnostic and can work toward building the skillset within the firm - or people who already have a specialty?
 
 FB uses Flow (for JavaScript typechecking) and Hack (typed version of PHP) which most people outside of FB won't use. If we were to hire only people who have prior experience with them, then we'd have a really hard time filling our head count.
 
@@ -350,7 +350,7 @@ I've answered about my work above.
 
 I didn't come up with NUSMods. [Beng](https://nusmods.com/team) did. I helped to build features (my favorite being theming and dark mode), recruit members into the team, and also started the v3 rewrite which is the one you are using now. Most of the credit would go to [Yi Jiang](https://www.github.com/ZhangYiJiang), [Li Kai](https://www.github.com/li-kai) and [E-Liang](https://www.github.com/taneliang) for the current version. NUSMods code base isn't exactly that big, but it took us over a year of work to rewrite it on a modern stack.
 
-Shout-out to [Christopher Goh](https://www.github.com/chrisgzf) for taking the helm now! Joining NUSMods was one of the best decisions in my life, as impacted the lives of so many students (I daresay above 100k), learnt so much from working on it (it's a relatively complex web application), and it helped me grow my network of like-minded individuals. **We need more people to contribute so that the project can live on.** Notice that the NUSMods core team (and alumni) have pretty zai backgrounds? Correlation or causation? Maybe both.
+Shout-out to [Christopher Goh](https://www.github.com/chrisgzf) for taking the helm now! Joining NUSMods was one of the best decisions in my life, as impacted the lives of so many students (I daresay above 100k), learned so much from working on it (it's a relatively complex web application), and it helped me grow my network of like-minded individuals. **We need more people to contribute so that the project can live on.** Notice that the NUSMods core team (and alumni) have pretty zai backgrounds? Correlation or causation? Maybe both.
 
 I came up with the idea for NUSWhispers but I didn't write much code for it. I was tutor for a web development course (CP3101B) back in 2015 and I proposed that idea to some students. I'm glad they did a darn good job of it. Back then I wanted to create a platform that could connect and help students around the school and the idea of an anonymous platform/page sounded like fun.
 

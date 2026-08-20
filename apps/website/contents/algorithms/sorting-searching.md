@@ -37,7 +37,7 @@ While you're unlikely to be asked to implement a sorting algorithm from scratch 
 - Additional (only if you have time)
   - [Exponentially Easy Selection Sort](https://medium.com/basecs/exponentially-easy-selection-sort-d7a34292b049), basecs
   - [Bubbling Up With Bubble Sorts](https://medium.com/basecs/bubbling-up-with-bubble-sorts-3df5ac88e592), basecs
-  - [Inching Towards Insertion Sort](https://medium.com/basecs/inching-towards-insertion-sort-9799274430da), basecs
+  - [Inching Towards Insertion Sort](https://medium.com/basecs/inching-toward-insertion-sort-9799274430da), basecs
   - [Making Sense of Merge Sort (Part 1)](https://medium.com/basecs/making-sense-of-merge-sort-part-1-49649a143478), basecs
   - [Making Sense of Merge Sort (Part 2)](https://medium.com/basecs/making-sense-of-merge-sort-part-2-be8706453209), basecs
   - [Pivoting To Understand Quicksort (Part 1)](https://medium.com/basecs/pivoting-to-understand-quicksort-part-1-75178dfb9313), basecs

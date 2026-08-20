@@ -57,7 +57,7 @@ export default [
         offer from big tech companies.
         <br />
         <br />
-        I've learnt a few things and blogged about them on{' '}
+        I've learned a few things and blogged about them on{' '}
         <a href="https://www.zhenghao.io/" rel="noopener">
           https://www.zhenghao.io/
         </a>
@@ -105,7 +105,7 @@ export default [
         <br />
         <br />
         The most use- section for me was the Coding and Algorithms along with
-        Company interview formats where I learnt the process beforehand. The
+        Company interview formats where I learned the process beforehand. The
         questions covered in the list along with the resources helped me get a
         broad understanding of concepts like BFS, DFS and array operations which
         I struggled with earlier. This helped me get into Mathworks, Microsoft
@@ -151,7 +151,7 @@ export default [
         preparation to offer negotiation.
         <br />
         <br />
-        My favourite part is the{' '}
+        My favorite part is the{' '}
         <a
           href="https://www.techinterviewhandbook.org/grind75/"
           target="_blank"

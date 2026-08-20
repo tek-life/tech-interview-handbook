@@ -25,7 +25,7 @@ A tree is a widely used abstract data type that represents a hierarchical struct
 
 A tree is an undirected and connected acyclic graph. There are no cycles or loops. Each node can be like the root node of its own subtree, making [recursion](recursion.md) a useful technique for tree traversal.
 
-For the purpose of interviews, you will usually be asked on binary trees as opposed to ternary (3 children) or N-ary (N children) trees. In this page,we will cover binary trees and binary search trees, which is a special case of binary trees.
+For the purpose of interviews, you will usually be asked on binary trees as opposed to ternary (3 children) or N-ary (N children) trees. In this page, we will cover binary trees and binary search trees, which is a special case of binary trees.
 
 Trees are commonly used to represent hierarchical data, e.g. file systems, JSON, and HTML documents. Do check out the section on [Trie](trie.md), which is an advanced tree used for efficiently storing and searching strings.
 
